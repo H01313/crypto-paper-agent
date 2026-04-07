@@ -1,29 +1,28 @@
-name: Crypto Paper Trader ✅
-on: [workflow_dispatch]
+name: Crypto Agent 24/7 ✅
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # Automatisch elke 30 minuten
+  workflow_dispatch:       # Manual knop
+
 jobs:
   trade:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Run PURE Python agent
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run crypto agent
       run: |
-        echo "🚀 Starting crypto agent..."
-        python3 main.py || echo "❌ Python crashed"
-    
-    - name: Verify logs
-    - name: Upload logs als artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: btc-trades
-        path: logs.json
+        echo "🚀 Starting BTC trader..."
+        python3 main.py
+      
+    - name: Verify logs created
       run: |
         ls -la logs.json || echo "❌ No logs.json"
         cat logs.json || echo "❌ Cannot read logs"
-    
-    - name: Upload logs
+      
+    - name: 📦 Upload BTC trades als download
       uses: actions/upload-artifact@v4
-      if: always()
       with:
-        name: crypto-logs
+        name: btc-trades-logs
         path: logs.json
