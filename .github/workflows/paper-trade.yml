@@ -1,28 +1,29 @@
-name: Crypto Agent 24/7 ✅
+name: Crypto Agent 24/7 LIVE
 on:
   schedule:
-    - cron: '*/30 * * * *'  # Automatisch elke 30 minuten
-  workflow_dispatch:       # Manual knop
+    - cron: '*/30 * * * *'           # ← DIT = 24/7 elke 30 min!
+  workflow_dispatch:                  # ← Manual knop blijft
 
 jobs:
   trade:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v4
-      
-    - name: Run crypto agent
+    
+    - name: Run BTC Trader
       run: |
-        echo "🚀 Starting BTC trader..."
+        echo "🚀 LIVE TRADE $(date)"
         python3 main.py
-      
-    - name: Verify logs created
+    
+    - name: Show Trade Results
       run: |
-        ls -la logs.json || echo "❌ No logs.json"
-        cat logs.json || echo "❌ Cannot read logs"
-      
-    - name: 📦 Upload BTC trades als download
+        echo "--- LOGS ---"
+        ls -la logs.json
+        cat logs.json
+    
+    - name: 📥 Download Trades
       uses: actions/upload-artifact@v4
       with:
-        name: btc-trades-logs
+        name: btc-daily-trades
         path: logs.json
