@@ -1,37 +1,24 @@
-name: Crypto Paper Trader DEBUG
+name: Crypto Paper Trader ✅
 on: [workflow_dispatch]
 jobs:
-  debug:
+  trade:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup Python
-      uses: actions/setup-python@v5
+    - name: Run PURE Python agent
+      run: |
+        echo "🚀 Starting crypto agent..."
+        python3 main.py || echo "❌ Python crashed"
+    
+    - name: Verify logs
+      run: |
+        ls -la logs.json || echo "❌ No logs.json"
+        cat logs.json || echo "❌ Cannot read logs"
+    
+    - name: Upload logs
+      uses: actions/upload-artifact@v4
+      if: always()
       with:
-        python-version: '3.11'
-    
-    - name: Cache pip
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-    
-    - name: Install deps SLOWLY
-      run: |
-        pip install --no-cache-dir --upgrade pip
-        pip install ccxt==4.3.0 pandas==2.2.2
-        pip install pandas_ta || echo "pandas_ta optional"
-    
-    - name: Test Python basics
-      run: |
-        python -c "import sys; print('Python OK:', sys.version)"
-        python -c "import ccxt; print('CCXT OK:', ccxt.__version__)"
-        python -c "import pandas; print('Pandas OK:', pandas.__version__)"
-    
-    - name: Run agent with FULL ERROR
-      run: |
-        python -u main.py --once 2>&1 || echo "=== FULL ERROR ==="
-    
-    - name: List files
-      run: ls -la *.json *.py
+        name: crypto-logs
+        path: logs.json
