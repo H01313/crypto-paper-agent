@@ -1,35 +1,37 @@
-name: Crypto Paper Trader
-on:
-  schedule:
-    - cron: '*/30 * * * *'
-  workflow_dispatch:
+name: Crypto Paper Trader DEBUG
+on: [workflow_dispatch]
 jobs:
-  trade:
+  debug:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python
+    - name: Setup Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
     
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install ccxt pandas pandas_ta
-    
-    - name: Run crypto agent
-      run: |
-        python main.py --once || echo "Agent error - check logs above"
-      continue-on-error: true
-    
-    - name: Show logs if exist
-      run: ls -la *.json || echo "No logs.json created"
-    
-    - name: Upload logs
-      uses: actions/upload-artifact@v4
-      if: always()
+    - name: Cache pip
+      uses: actions/cache@v4
       with:
-        name: crypto-logs
-        path: logs.json
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+    
+    - name: Install deps SLOWLY
+      run: |
+        pip install --no-cache-dir --upgrade pip
+        pip install ccxt==4.3.0 pandas==2.2.2
+        pip install pandas_ta || echo "pandas_ta optional"
+    
+    - name: Test Python basics
+      run: |
+        python -c "import sys; print('Python OK:', sys.version)"
+        python -c "import ccxt; print('CCXT OK:', ccxt.__version__)"
+        python -c "import pandas; print('Pandas OK:', pandas.__version__)"
+    
+    - name: Run agent with FULL ERROR
+      run: |
+        python -u main.py --once 2>&1 || echo "=== FULL ERROR ==="
+    
+    - name: List files
+      run: ls -la *.json *.py
