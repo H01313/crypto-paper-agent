@@ -1,0 +1,26 @@
+name: Crypto Paper Trader
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # Elke 30min
+  workflow_dispatch:
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install deps
+      run: pip install ccxt pandas pandas_ta
+    - name: Run agent
+      run: python main.py --once
+      env:
+        BYBIT_API_KEY: ${{ secrets.BYBIT_API_KEY }}
+        BYBIT_SECRET: ${{ secrets.BYBIT_SECRET }}
+    - name: Upload logs
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: crypto-logs
+        path: logs.json
