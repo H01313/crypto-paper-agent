@@ -1,13 +1,17 @@
-name: Crypto Debug FINAL
+name: Crypto Agent ✅
 on: [workflow_dispatch]
 jobs:
-  debug:
+  trade:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Run line-by-line debug
-      run: python3 main.py
-    - name: Check output
+    - name: List ALL files first
+      run: ls -la
+    - name: Run agent
       run: |
-        ls -la logs.json test.txt
+        ls -la main.py || echo "❌ main.py MISSING!"
+        python3 main.py
+    - name: Verify logs
+      run: |
+        ls -la logs.json
         cat logs.json
