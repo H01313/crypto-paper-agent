@@ -1,0 +1,2 @@
+# Uitbreiding voor backtrader - plak in main.py indien nodig
+print("Extra strategies loaded")
