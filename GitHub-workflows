@@ -12,6 +12,11 @@ jobs:
         ls -la main.py || echo "❌ main.py MISSING!"
         python3 main.py
     - name: Verify logs
+    - name: Upload logs als artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: btc-trades
+        path: logs.json
       run: |
         ls -la logs.json
         cat logs.json
