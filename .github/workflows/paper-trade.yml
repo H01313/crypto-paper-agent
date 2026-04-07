@@ -12,6 +12,11 @@ jobs:
         python3 main.py || echo "❌ Python crashed"
     
     - name: Verify logs
+    - name: Upload logs als artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: btc-trades
+        path: logs.json
       run: |
         ls -la logs.json || echo "❌ No logs.json"
         cat logs.json || echo "❌ Cannot read logs"
